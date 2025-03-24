@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
@@ -55,16 +54,3 @@ fun FunctionInputPage() {
     }
 }
 
-data class TableItem(
-    val value: String
-)
-
-fun getTableItemsList(variablesCount: Int): List<TableItem>{
-    return listOf(
-        TableItem("v"), TableItem("∧"), TableItem("¬"),
-        TableItem("⊕"), TableItem("→"), TableItem("≡"),
-        TableItem("0"), TableItem("1"), TableItem("("),
-        TableItem(")")
-    ) +
-    (1..variablesCount).map{ item -> TableItem("x$item") }
-}
