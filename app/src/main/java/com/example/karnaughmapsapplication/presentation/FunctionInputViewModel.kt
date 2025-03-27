@@ -26,11 +26,23 @@ class FunctionInputViewModel: ViewModel() {
     }
 
     private fun handleSetVariableCount(count: String) {
-        _state.update { currentState ->
-            currentState.copy(
-                currentVariableCountString = count,
-                error = if (count.isBlank()) "Count cannot be empty" else null
-            )
+        when {
+            count.isBlank() -> {
+                _state.update { it.copy(error = "Count cannot be empty", currentVariableCount = 0) }
+            }
+            !count.all { it.isDigit() } -> {
+                _state.update { it.copy(error = "Only digits allowed") }
+            }
+            else -> {
+                val countInt = count.toInt().coerceIn(1, 8)
+                _state.update {
+                    it.copy(
+                        currentVariableCount = countInt,
+                        currentVariableCountString = countInt.toString(),
+                        error = null
+                    )
+                }
+            }
         }
     }
 
@@ -53,9 +65,24 @@ data class TableItem(
     val value: String
 )
 
+open class Expression{
+    val operation: Operation = Operation.Or
+}
+class UnaryExpression : Expression(){
+    val operand: Boolean = false
+}
+class BinaryExpression : Expression(){
+    val operand1: Boolean = false
+    val operand2: Boolean = false
+}
+
+enum class Operation{
+    Or, And
+}
+
 fun getTableItemsList(variablesCount: Int): List<TableItem>{
     return listOf(
-        TableItem("v"), TableItem("∧"), TableItem("¬"),
+        TableItem("V"), TableItem("∧"), TableItem("¬"),
         TableItem("⊕"), TableItem("→"), TableItem("≡"),
         TableItem("0"), TableItem("1"), TableItem("("),
         TableItem(")")
