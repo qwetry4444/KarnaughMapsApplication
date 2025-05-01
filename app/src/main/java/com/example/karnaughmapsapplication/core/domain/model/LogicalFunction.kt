@@ -5,9 +5,6 @@ class LogicalFunction(
     var variablesCount: Int = 0
 ) {
 
-
-
-
     fun isValid(): Boolean {
 
         val binaryOperators = listOf("∧", "V", "⊕", "->", "≡")

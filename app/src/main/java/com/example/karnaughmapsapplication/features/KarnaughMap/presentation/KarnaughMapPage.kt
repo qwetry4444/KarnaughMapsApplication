@@ -12,22 +12,30 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.karnaughmapsapplication.core.domain.model.LogicalFunction
 
 @Composable
 fun KarnaughMapPage(logicalFunction: LogicalFunction, navController: NavHostController) {
+    val karnaughMapViewModelFactory = KarnaughMapViewModelFactory(logicalFunction)
+    val viewModel: KarnaughMapViewModel = viewModel(factory = karnaughMapViewModelFactory)
+    val uiState: KarnaughMapUiState by viewModel.uiState.collectAsState()
+
     Column {
         MapTopAppBar(navController)
         Spacer(modifier = Modifier.height(32.dp))
 
         Column(modifier = Modifier.padding(32.dp)) {
-            OriginalFunction(logicalFunction.expression)
+            OriginalFunction(uiState.logicalFunction.expression)
             Spacer(modifier = Modifier.height(32.dp))
 
-            KarnaughMap()
+            KarnaughMapTable()
             Spacer(modifier = Modifier.height(32.dp))
 
             FunctionMinimization()
@@ -60,7 +68,7 @@ fun OriginalFunction(logicalExpression: String){
 }
 
 @Composable
-fun KarnaughMap(){
+fun KarnaughMapTable(){
     Text("Карта Карно\n" +
             "...")
 }
