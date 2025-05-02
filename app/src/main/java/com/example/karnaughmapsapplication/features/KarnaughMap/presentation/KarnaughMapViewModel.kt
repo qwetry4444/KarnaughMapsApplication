@@ -2,10 +2,7 @@ package com.example.karnaughmapsapplication.features.KarnaughMap.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.karnaughmapsapplication.core.domain.logic.Parser
-import com.example.karnaughmapsapplication.core.domain.model.KarnaughMap
 import com.example.karnaughmapsapplication.core.domain.model.LogicalFunction
-import com.example.karnaughmapsapplication.core.domain.model.tokenize
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -13,7 +10,9 @@ class KarnaughMapViewModel(logicalFunction: LogicalFunction) : ViewModel()  {
     private var _uiState = MutableStateFlow(KarnaughMapUiState(logicalFunction))
     val uiState = _uiState.asStateFlow()
 
-
+    init {
+        _uiState.value.karnaughMap.tableFill()
+    }
 
 }
 

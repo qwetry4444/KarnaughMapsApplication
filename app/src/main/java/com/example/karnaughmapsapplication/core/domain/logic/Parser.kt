@@ -1,6 +1,6 @@
 package com.example.karnaughmapsapplication.core.domain.logic
 
-import com.example.karnaughmapsapplication.core.domain.model.Token
+
 import com.example.karnaughmapsapplication.core.domain.model.TokenType
 
 class Parser(private val tokens: List<Token>) {
