@@ -1,8 +1,11 @@
-package com.example.karnaughmapsapplication.core.domain.model
+package com.example.karnaughmapsapplication.core.domain.parsing
+
+import com.example.karnaughmapsapplication.core.domain.model.OrderedVariables
 
 class LogicalFunction(
     var expression: String = "",
-    var variablesCount: Int = 0
+    var variablesCount: Int = 0,
+    val variables: OrderedVariables = OrderedVariables(variablesCount)
 ) {
 
     fun isValid(): Boolean {
@@ -42,7 +45,8 @@ class LogicalFunction(
                             state = States.BINARY_OPERATOR
                         }
 
-                        expression[i].toString() in binaryOperators -> state = States.BINARY_OPERATOR
+                        expression[i].toString() in binaryOperators -> state =
+                            States.BINARY_OPERATOR
 
                         expression[i] == ')' -> {
                             if (openBrackets == 0) return false

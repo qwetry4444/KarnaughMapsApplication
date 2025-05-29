@@ -1,4 +1,4 @@
-package com.example.karnaughmapsapplication.core.domain.logic
+package com.example.karnaughmapsapplication.core.domain.parsing
 
 sealed class Expression {
     data class Variable(val name: String) : Expression() {

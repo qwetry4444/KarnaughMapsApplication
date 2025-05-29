@@ -7,7 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.karnaughmapsapplication.core.domain.model.LogicalFunction
+import com.example.karnaughmapsapplication.core.domain.parsing.LogicalFunction
 import com.example.karnaughmapsapplication.features.KarnaughMap.presentation.KarnaughMapPage
 
 @Composable

@@ -6,10 +6,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,10 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.karnaughmapsapplication.core.domain.model.LogicalFunction
+import com.example.karnaughmapsapplication.core.domain.parsing.LogicalFunction
 
 @Composable
 fun KarnaughMapPage(logicalFunction: LogicalFunction, navController: NavHostController) {
@@ -44,7 +42,12 @@ fun KarnaughMapPage(logicalFunction: LogicalFunction, navController: NavHostCont
             OriginalFunction(uiState.logicalFunction.expression)
             Spacer(modifier = Modifier.height(32.dp))
 
-            KarnaughMapTable(uiState.karnaughMap.table.size, uiState.karnaughMap.table.first().size, uiState.karnaughMap.table)
+            KarnaughMapTable(
+                uiState.karnaughMapTable.table,
+                uiState.karnaughMapTable.colsTitle,
+                uiState.karnaughMapTable.rowsTitle
+            )
+
             Spacer(modifier = Modifier.height(32.dp))
 
             FunctionMinimization()
@@ -77,17 +80,34 @@ fun OriginalFunction(logicalExpression: String){
 }
 
 @Composable
-fun KarnaughMapTable(rows: Int, cols: Int, data: List<List<Boolean>>){
-    Column(Modifier.background(Color.LightGray), horizontalAlignment = Alignment.CenterHorizontally) {
-        repeat(cols) { col ->
+fun KarnaughMapTable(data: List<List<String>>, columnsTitle: String, rowsTitle: String){
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        repeat(data.size + 1) { row ->
             Row {
-                repeat(rows) { row ->
-                    Box(modifier = Modifier
-                        .border(2.dp, Color.Black)
-                        .padding(20.dp)
-                    ){
-                        Text(if (data[row][col]) "1" else "0")
-                    }
+                repeat(data.first().size + 1) { col ->
+                    if (row == 0 || col == 0)
+                        Box(modifier = Modifier
+                            .border(2.dp, Color.Black)
+                            .padding(10.dp)
+                            .width(25.dp)
+                        ){
+                            Text(
+                                if (row == 0 && col == 0)
+                                    "F"
+                                else if (col == 0) rowsTitle
+                                else columnsTitle
+                            )
+                        }
+                    else
+                        Box(modifier = Modifier
+                            .border(2.dp, Color.Black)
+                            .background(Color.LightGray)
+                            .padding(10.dp)
+                            .width(25.dp)
+                        ){
+                            Text(data[row - 1][col - 1])
+                        }
+
                 }
             }
         }
@@ -104,5 +124,5 @@ fun FunctionMinimization(){
 @Preview(showBackground = true)
 @Composable
 fun TablePreview(){
-    KarnaughMapTable(2,2, listOf(listOf(true, false), listOf(false, true)))
+    //KarnaughMapTable(2,2, listOf(listOf(true, false), listOf(false, true)))
 }

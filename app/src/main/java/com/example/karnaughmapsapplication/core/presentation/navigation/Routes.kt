@@ -1,6 +1,6 @@
 package com.example.karnaughmapsapplication.core.presentation.navigation
 
-import com.example.karnaughmapsapplication.core.domain.model.LogicalFunction
+import com.example.karnaughmapsapplication.core.domain.parsing.LogicalFunction
 
 sealed class Screen(val route: String) {
     data object FunctionInput : Screen("function_input")

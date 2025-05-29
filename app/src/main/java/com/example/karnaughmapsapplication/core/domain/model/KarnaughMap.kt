@@ -1,74 +1,121 @@
 package com.example.karnaughmapsapplication.core.domain.model
 
-import com.example.karnaughmapsapplication.core.domain.logic.Expression
-import com.example.karnaughmapsapplication.core.domain.logic.Parser
-import com.example.karnaughmapsapplication.core.domain.logic.tokenize
+import com.example.karnaughmapsapplication.core.domain.parsing.Expression
+import kotlin.math.log2
+import kotlin.math.pow
 
 class KarnaughMap(
-    val logicalFunction: LogicalFunction,
-    val variables: MutableMap<String, Boolean> = mutableMapOf(),
-    val table: MutableList<MutableList<Boolean>> = MutableList(
-        logicalFunction.variablesCount + logicalFunction.variablesCount % 2
-    ) {
-        MutableList(logicalFunction.variablesCount - logicalFunction.variablesCount % 2) { false }
-    },
-    val expression: Expression = Parser(tokenize(logicalFunction.expression)).parseExpression()
+    private val expression: Expression,
+    val variables: OrderedVariables
 ) {
+    private val grayCodeGenerator: GrayCodeGenerator = GrayCodeGenerator()
+
+    var rowVariablesCount = variables.size / 2
+    var colVariablesCount = variables.size / 2 + variables.size % 2
+
+    val rowCount = 2.0.pow(rowVariablesCount).toInt()
+    val colCount = 2.0.pow(colVariablesCount).toInt()
+
+    var colsHeaders = MutableList(colCount) {""}
+    var rowsHeaders = MutableList(rowCount) {""}
+    val tableValues: MutableList<MutableList<Boolean>> = MutableList(rowCount) {
+        MutableList(colCount) { false }
+    }
 
     init {
-        (1..logicalFunction.variablesCount).forEach { i ->
-            variables["x$i"] = false
-        }
+        tableFill()
     }
-
-    fun incrementVariables(): Boolean {
-        val keys = variables.keys.sortedBy { it.substring(1).toInt() }.reversed()
-
-        for (key in keys) {
-            if (variables[key] == false) {
-                variables[key] = true
-                return true
-            }
-            variables[key] = false
-        }
-        return false
-    }
-
 
     fun tableFill(){
-        for (i in 0..<table.size){
-            for (j in 0..<table[i].size){
-                table[i][j] = expression.evaluate(variables)
-                incrementVariables()
+        for (i in 0 until rowCount ) {
+            // ??????????????????
+            rowsHeaders[i] = grayCodeGenerator.getCodeString(variables.size).substring(0, rowVariablesCount)
+            for (j in 0 until colCount ){
+                if (i == 0){
+                    colsHeaders[j] = grayCodeGenerator.getCodeString(variables.size).substring(rowVariablesCount)
+                }
+                tableValues[i][j] = expression.evaluate(variables.toMap())
+                grayCodeGenerator.getNextVars(variables)
             }
         }
     }
 }
 
-enum class TokenType {
-    VAR, AND, OR, NOT,
-    XOR, IMPLIES, EQU,
-    OPEN, CLOSE,
-    ONE, ZERO, NONE;
 
-    companion object {
-        fun fromChar(char: Char): TokenType {
-            return when (char) {
-                '∧' -> AND
-                'V' -> OR
-                '¬' -> NOT
-                '⊕' -> XOR
-                '(' -> OPEN
-                ')' -> CLOSE
-                '≡' -> EQU
-                '-' -> IMPLIES
-                '0' -> ZERO
-                '1' -> ONE
-                else -> NONE
+class GrayCodeGenerator {
+    var grayCodeString: String = "0"
+        private set
+    private var iterationNumber: Int = 0
+
+    fun next() {
+        iterationNumber++
+        val grayCodeNumber = iterationNumber.xor(iterationNumber.shr(1))
+        grayCodeString = Integer.toBinaryString(grayCodeNumber)
+    }
+
+    fun getNextVars(vars: OrderedVariables){
+        next()
+        val codeList = grayCodeString.padStart(vars.size, '0').toList()
+
+        codeList.forEachIndexed { index, c ->
+            vars.setByIndex(index, c.toBoolean())
+        }
+    }
+
+    fun getCodeString(bitCount: Int) : String {
+        return grayCodeString.padStart(bitCount, '0')
+    }
+
+    private fun Char.toBoolean() : Boolean = when(this) {
+        '1' -> true
+        '0' -> false
+        else -> throw IllegalArgumentException("Invalid char: $this")
+    }
+}
+
+
+
+
+
+
+class KarnaughTableFormatter(
+    val kMap: KarnaughMap
+) {
+    val table: MutableList<MutableList<String>> =
+        MutableList(kMap.rowCount + 1) { MutableList(kMap.colCount + 1) {""} }
+    val rowsTitle =
+        (0 until  kMap.rowVariablesCount).map {
+            kMap.variables.getByIndex(it).first
+        }.joinToString("")
+    val colsTitle =
+        (kMap.rowVariablesCount until kMap.rowVariablesCount + kMap.colVariablesCount).map {
+            kMap.variables.getByIndex(it).first
+        }.joinToString("")
+
+    fun fillTable() {
+        for (i in 0..kMap.rowCount){
+            for (j in 0..kMap.colCount) {
+                if (i == 0) {
+                    if (j == 0)
+                        continue
+                    table[i][j] = kMap.colsHeaders[j - 1]
+                } else if (j == 0) {
+                    table[i][j] = kMap.rowsHeaders[i - 1]
+                } else {
+                    table[i][j] = if (kMap.tableValues[i - 1][j - 1]) "1" else "0"
+                }
             }
         }
     }
+
+    init {
+        fillTable()
+    }
+
 }
+
+
+
 
 
 

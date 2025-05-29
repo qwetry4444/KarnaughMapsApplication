@@ -1,6 +1,5 @@
-package com.example.karnaughmapsapplication.core.domain.logic
+package com.example.karnaughmapsapplication.core.domain.parsing
 
-import com.example.karnaughmapsapplication.core.domain.model.TokenType
 
 data class Token(
     val type: TokenType,
@@ -35,4 +34,29 @@ fun tokenize(functionString: String) : MutableList<Token> {
         }
     }
     return tokens
+}
+
+enum class TokenType {
+    VAR, AND, OR, NOT,
+    XOR, IMPLIES, EQU,
+    OPEN, CLOSE,
+    ONE, ZERO, NONE;
+
+    companion object {
+        fun fromChar(char: Char): TokenType {
+            return when (char) {
+                '∧' -> AND
+                'V' -> OR
+                '¬' -> NOT
+                '⊕' -> XOR
+                '(' -> OPEN
+                ')' -> CLOSE
+                '≡' -> EQU
+                '-' -> IMPLIES
+                '0' -> ZERO
+                '1' -> ONE
+                else -> NONE
+            }
+        }
+    }
 }

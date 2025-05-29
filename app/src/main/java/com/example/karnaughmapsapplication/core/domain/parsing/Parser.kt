@@ -1,7 +1,6 @@
-package com.example.karnaughmapsapplication.core.domain.logic
+package com.example.karnaughmapsapplication.core.domain.parsing
 
 
-import com.example.karnaughmapsapplication.core.domain.model.TokenType
 
 class Parser(private val tokens: List<Token>) {
     private var position = 0
