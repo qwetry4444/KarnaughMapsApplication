@@ -1,7 +1,6 @@
-package com.example.karnaughmapsapplication.core.domain.model
+package com.example.karnaughmapsapplication.core.domain.KarnaughMapLogic
 
 import com.example.karnaughmapsapplication.core.domain.parsing.Expression
-import kotlin.math.log2
 import kotlin.math.pow
 
 class KarnaughMap(
@@ -42,36 +41,7 @@ class KarnaughMap(
 }
 
 
-class GrayCodeGenerator {
-    var grayCodeString: String = "0"
-        private set
-    private var iterationNumber: Int = 0
 
-    fun next() {
-        iterationNumber++
-        val grayCodeNumber = iterationNumber.xor(iterationNumber.shr(1))
-        grayCodeString = Integer.toBinaryString(grayCodeNumber)
-    }
-
-    fun getNextVars(vars: OrderedVariables){
-        next()
-        val codeList = grayCodeString.padStart(vars.size, '0').toList()
-
-        codeList.forEachIndexed { index, c ->
-            vars.setByIndex(index, c.toBoolean())
-        }
-    }
-
-    fun getCodeString(bitCount: Int) : String {
-        return grayCodeString.padStart(bitCount, '0')
-    }
-
-    private fun Char.toBoolean() : Boolean = when(this) {
-        '1' -> true
-        '0' -> false
-        else -> throw IllegalArgumentException("Invalid char: $this")
-    }
-}
 
 
 

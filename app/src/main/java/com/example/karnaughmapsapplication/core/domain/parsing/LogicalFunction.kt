@@ -1,6 +1,6 @@
 package com.example.karnaughmapsapplication.core.domain.parsing
 
-import com.example.karnaughmapsapplication.core.domain.model.OrderedVariables
+import com.example.karnaughmapsapplication.core.domain.KarnaughMapLogic.OrderedVariables
 
 class LogicalFunction(
     var expression: String = "",

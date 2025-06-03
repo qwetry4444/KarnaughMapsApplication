@@ -1,4 +1,4 @@
-package com.example.karnaughmapsapplication.core.domain.model
+package com.example.karnaughmapsapplication.core.domain.KarnaughMapLogic
 
 class OrderedVariables(variableCount: Int, variablesNames: List<String>? = null) : Iterable<Pair<String, Boolean>> {
 
