@@ -26,12 +26,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.karnaughmapsapplication.core.domain.KarnaughMapLogic.KarnaughMapMinimizer
 import com.example.karnaughmapsapplication.core.domain.parsing.LogicalFunction
+import com.example.karnaughmapsapplication.features.FunctionInput.presentation.KarnaughCell
 
 @Composable
 fun KarnaughMapPage(logicalFunction: LogicalFunction, navController: NavHostController) {
@@ -50,12 +53,13 @@ fun KarnaughMapPage(logicalFunction: LogicalFunction, navController: NavHostCont
             KarnaughMapTable(
                 uiState.karnaughMapTable.table,
                 uiState.karnaughMapTable.colsTitle,
-                uiState.karnaughMapTable.rowsTitle
+                uiState.karnaughMapTable.rowsTitle,
+                uiState.karnaughMapMinimizer.groups
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            FunctionMinimization()
+            FunctionMinimization(uiState.minimizedLogicalFunction)
         }
     }
 
@@ -88,64 +92,121 @@ fun OriginalFunction(logicalExpression: String){
 fun KarnaughMapTable(
     data: List<List<String>>,
     colTitle: String,
-    rowTitle: String
+    rowTitle: String,
+    groups: List<KarnaughMapMinimizer.Group> = listOf()
 ) {
     val cellSize = 40.dp
-        val headerSpan = data.first().size * cellSize
+    val rowCount = data.size
+    val colCount = data.firstOrNull()?.size ?: 0
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        // Первая строка: F и colTitle
-        Row {
-            // Левая верхняя объединённая "F" (как 1 большая клетка 2x2)
-            Box(
-                modifier = Modifier
-                    .size(cellSize * 2)
-                    .border(1.dp, Color.Black),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("F", fontWeight = FontWeight.Bold)
-            }
+        HeaderSection(cellSize, colCount, colTitle, data.first())
+        RowHeadersAndData(cellSize, rowCount, colCount, data, rowTitle, groups)
+    }
+}
 
-            // Объединённая верхняя строка: colTitle
+@Composable
+private fun HeaderSection(cellSize: Dp, colCount: Int, colTitle: String, columnHeaders: List<String>) {
+    Row {
+        FBox(cellSize)
+        Column(modifier = Modifier.border(2.dp, Color.Black).background(Color.LightGray)) {
+            ColumnTitleBox(cellSize, colCount, colTitle)
+            ColumnHeadersRow(cellSize, colCount, columnHeaders)
+        }
+    }
+}
+
+@Composable
+private fun FBox(cellSize: Dp) {
+    Box(
+        modifier = Modifier
+            .size(cellSize * 2)
+            .border(2.dp, Color.Black),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("F", fontWeight = FontWeight.Bold)
+    }
+}
+
+@Composable
+private fun ColumnTitleBox(cellSize: Dp, colCount: Int, colTitle: String) {
+    Box(
+        modifier = Modifier
+            .width(cellSize * (colCount - 1))
+            .height(cellSize)
+            .border(2.dp, Color.Black),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(colTitle, fontWeight = FontWeight.Bold)
+    }
+}
+
+@Composable
+private fun ColumnHeadersRow(cellSize: Dp, colCount: Int, columnHeaders: List<String>) {
+    Row {
+        for (col in 1 until colCount) {
             Box(
                 modifier = Modifier
-                    .width(cellSize * data.first().size)
-                    .height(cellSize * 2)
-                    .border(1.dp, Color.Black),
+                    .size(cellSize)
+                    .border(2.dp, Color.Black),
                 contentAlignment = Alignment.Center
             ) {
-                Text(colTitle, fontWeight = FontWeight.Bold)
+                Text(columnHeaders[col], fontWeight = FontWeight.Medium)
             }
         }
+    }
+}
 
-        // Остальная таблица
-        Row {
-            // Левая объединённая колонка: rowTitle
-            Box(
-                modifier = Modifier
-                    .width(cellSize * 2)
-                    .height(cellSize * data.size)
-                    .border(1.dp, Color.Black),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(rowTitle, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-            }
-
-            // Таблица значений
-            Column {
-                data.forEach { row ->
-                    Row {
-                        row.forEach { cell ->
-                            Box(
-                                modifier = Modifier
-                                    .size(cellSize)
-                                    .border(1.dp, Color.Black),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(cell)
-                            }
-                        }
+@Composable
+private fun RowHeadersAndData(
+    cellSize: Dp,
+    rowCount: Int,
+    colCount: Int,
+    data: List<List<String>>,
+    rowTitle: String,
+    groups: List<KarnaughMapMinimizer.Group>
+) {
+    Row {
+        RowHeaders(cellSize, rowCount, data, rowTitle)
+        Column {
+            for (i in 1 until rowCount) {
+                Row {
+                    for (j in 1 until colCount) {
+                        KarnaughCell(data[i][j], i, j, groups, cellSize)
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RowHeaders(
+    cellSize: Dp,
+    rowCount: Int,
+    data: List<List<String>>,
+    rowTitle: String
+) {
+    Row(modifier = Modifier.border(2.dp, Color.Black).background(Color.LightGray)) {
+        Box(
+            modifier = Modifier
+                .width(cellSize)
+                .height(cellSize * (rowCount - 1))
+                .border(1.dp, Color.Black),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(rowTitle, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+        }
+
+        Column {
+            repeat(rowCount - 1) {
+                Box(
+                    modifier = Modifier
+                        .size(cellSize)
+                        .border(1.dp, Color.Black),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(data[it + 1][0], fontWeight = FontWeight.Medium)
                 }
             }
         }
@@ -155,10 +216,14 @@ fun KarnaughMapTable(
 
 
 
+
+
+
 @Composable
-fun FunctionMinimization(){
-    Text("Минимизация фукнции\n" +
-            "...")
+fun FunctionMinimization(minimizedLogicalFunction: String){
+    Text(
+        "Минимизированная фукнция\n$minimizedLogicalFunction"
+            )
 }
 
 @Preview(showBackground = true)

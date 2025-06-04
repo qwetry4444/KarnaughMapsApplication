@@ -84,3 +84,14 @@ enum class OperationType{
 fun getTableItemsList(variablesCount: Int): List<TableItem> {
     return TableItem.getAllTableItems(variablesCount)
 }
+
+data class ButtonGroup(val title: String, val items: List<TableItem>)
+
+fun getGroupedTableItems(variablesCount: Int): List<ButtonGroup> {
+    return listOf(
+        ButtonGroup("Скобки", TableItem.Bracket.getAllBrackets()),
+        ButtonGroup("Операции", TableItem.Operation.getAllOperations()),
+        ButtonGroup("Переменные", TableItem.Variable.getAllVariables(variablesCount)),
+        ButtonGroup("Константы", TableItem.Constant.getAllConstants())
+    )
+}

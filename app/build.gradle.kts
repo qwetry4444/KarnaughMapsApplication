@@ -64,5 +64,7 @@ dependencies {
 
     implementation(libs.androidx.fragment.ktx)
 
+    implementation(libs.androidx.foundation)
+    implementation(libs.ui.graphics)
 
 }

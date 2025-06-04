@@ -3,9 +3,12 @@ import android.widget.ImageButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,11 +44,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.InspectableModifier
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
+import com.example.karnaughmapsapplication.core.domain.model.getGroupedTableItems
 import com.example.karnaughmapsapplication.core.domain.model.getTableItemsList
 import com.example.karnaughmapsapplication.features.FunctionInput.presentation.ErrorType
 import com.example.karnaughmapsapplication.features.FunctionInput.presentation.FunctionInputUiState
@@ -165,24 +167,58 @@ fun FunctionInputField(
 }
 
 @Composable
-fun ButtonsGrid(currentVariableCount: Int, processAction: (functionInputAction: FunctionInputActions) -> Unit){
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.fillMaxWidth(),
+fun ButtonsGrid(
+    currentVariableCount: Int,
+    processAction: (FunctionInputActions) -> Unit
+) {
+    val groups = getGroupedTableItems(currentVariableCount)
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        modifier = Modifier.fillMaxWidth()
     ) {
-        items(getTableItemsList(currentVariableCount)) { item ->
-            Button(
-                onClick = { processAction(FunctionInputActions.PressElementButton(item)) },
-                modifier = Modifier.width(20.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
-            ) {
-                Text(text = item.tableItemToString())
+        groups.forEach { group ->
+            Column {
+                Text(
+                    text = group.title,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 16.sp
+                    ),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    group.items.forEach { item ->
+                        Button(
+                            onClick = { processAction(FunctionInputActions.PressElementButton(item)) },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFB0BEC5),
+                                contentColor = Color.Black
+                            ),
+                            modifier = Modifier
+                                .height(42.dp)
+                                .defaultMinSize(minWidth = 48.dp)
+                        ) {
+                            Text(
+                                text = item.tableItemToString(),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+                }
+
             }
         }
     }
 }
+
+
 
 @Composable
 fun SubmitButton(

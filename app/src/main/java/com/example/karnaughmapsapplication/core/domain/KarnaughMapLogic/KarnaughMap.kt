@@ -27,7 +27,6 @@ class KarnaughMap(
 
     fun tableFill(){
         for (i in 0 until rowCount ) {
-            // ??????????????????
             rowsHeaders[i] = grayCodeGenerator.getCodeString(variables.size).substring(0, rowVariablesCount)
             for (j in 0 until colCount ){
                 if (i == 0){
@@ -39,14 +38,6 @@ class KarnaughMap(
         }
     }
 }
-
-
-
-
-
-
-
-
 
 class KarnaughTableFormatter(
     val kMap: KarnaughMap
