@@ -26,7 +26,6 @@ class KarnaughMapMinimizer(private val map: KarnaughMap) {
                 if (map.tableValues[i][j]) {
                     val groupCells = collectGroup(i, j, visited)
                     if (groupCells.isNotEmpty()) {
-                        // Mark all cells in the found group as visited
                         groupCells.forEach { (x, y) -> visited[x][y] = true }
                         result.add(Group(groupCells))
                     }
@@ -126,7 +125,7 @@ class KarnaughMapMinimizer(private val map: KarnaughMap) {
                 if (referenceBit == '1') variablesList.add(name) else variablesList.add("¬${name}")
             }
         }
-        return variablesList.joinToString(" V ")
+        return variablesList.joinToString("")
     }
 
     private fun getBitAt(position: Pair<Int, Int>, bitIndex: Int): Boolean {

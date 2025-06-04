@@ -56,60 +56,77 @@ fun calculateBorders(
     groups: List<KarnaughMapMinimizer.Group>,
     groupColors: List<Color>
 ): Modifier {
-    val groupIndex = groups.indexOfFirst { it.positions.contains(row to col) }
-    if (groupIndex == -1) return Modifier // Ячейка не принадлежит ни одной группе
-
-    val color = groupColors[groupIndex % groupColors.size]
-    val group = groups[groupIndex]
-
-    fun hasSameGroupAt(r: Int, c: Int): Boolean {
-        return group.positions.contains(r to c)
+    // Собираем список индексов тех групп, в которые входит (row, col)
+    val matchingGroups = groups.mapIndexedNotNull { index, group ->
+        if (group.positions.contains(row to col)) index else null
+    }
+    if (matchingGroups.isEmpty()) {
+        // Если ячейка ни в одну группу не входит
+        return Modifier
     }
 
-    val drawTop = !hasSameGroupAt(row - 1, col)
-    val drawBottom = !hasSameGroupAt(row + 1, col)
-    val drawLeft = !hasSameGroupAt(row, col - 1)
-    val drawRight = !hasSameGroupAt(row, col + 1)
+    // Функция-помощник: проверяет, есть ли в той же группе ячейка-сосед
+    fun hasSameGroupAt(group: KarnaughMapMinimizer.Group, r: Int, c: Int): Boolean {
+        return group.positions.contains(r to c)
+    }
 
     return Modifier.drawBehind {
         val strokeWidth = 4.dp.toPx()
 
-        if (drawTop) {
-            drawLine(color, Offset(0f, 0f), Offset(size.width, 0f), strokeWidth)
-        }
-        if (drawBottom) {
-            drawLine(color, Offset(0f, size.height), Offset(size.width, size.height), strokeWidth)
-        }
-        if (drawLeft) {
-            drawLine(color, Offset(0f, 0f), Offset(0f, size.height), strokeWidth)
-        }
-        if (drawRight) {
-            drawLine(color, Offset(size.width, 0f), Offset(size.width, size.height), strokeWidth)
+        // Для каждой группы, в которой содержится (row, col), рисуем свои границы
+        matchingGroups.forEachIndexed { idxInList, groupIndex ->
+            val group = groups[groupIndex]
+            val color = groupColors[groupIndex % groupColors.size]
+
+            // Проверка, надо ли рисовать ту или иную грань
+            // (мы считаем, что выходит за пределы, если соседа нет в той же группе)
+            val drawTop = !hasSameGroupAt(group, row - 1, col)
+            val drawBottom = !hasSameGroupAt(group, row + 1, col)
+            val drawLeft = !hasSameGroupAt(group, row, col - 1)
+            val drawRight = !hasSameGroupAt(group, row, col + 1)
+
+            // Опционально: смещаем каждую следующую обводку внутрь/наружу,
+            // чтобы они не накладывались абсолютно друг на друга.
+            // Здесь просто рисуем в одну и ту же позицию (будут перекрывать друг друга),
+            // но можно чуть "отступить" смещение для idxInList:
+            val offsetMultiplier = idxInList.toFloat()
+            val inset = offsetMultiplier * (strokeWidth / 2)
+
+            if (drawTop) {
+                drawLine(
+                    color = color,
+                    start = Offset(x = inset, y = inset),
+                    end   = Offset(x = size.width - inset, y = inset),
+                    strokeWidth = strokeWidth
+                )
+            }
+            if (drawBottom) {
+                drawLine(
+                    color = color,
+                    start = Offset(x = inset, y = size.height - inset),
+                    end   = Offset(x = size.width - inset, y = size.height - inset),
+                    strokeWidth = strokeWidth
+                )
+            }
+            if (drawLeft) {
+                drawLine(
+                    color = color,
+                    start = Offset(x = inset, y = inset),
+                    end   = Offset(x = inset, y = size.height - inset),
+                    strokeWidth = strokeWidth
+                )
+            }
+            if (drawRight) {
+                drawLine(
+                    color = color,
+                    start = Offset(x = size.width - inset, y = inset),
+                    end   = Offset(x = size.width - inset, y = size.height - inset),
+                    strokeWidth = strokeWidth
+                )
+            }
         }
     }
 }
 
-enum class RectangleEdge {
-    Top, Bottom, Left, Right
-}
-
-fun Modifier.border(border: BorderStroke, edge: RectangleEdge): Modifier {
-    return this.then(
-        when (edge) {
-            RectangleEdge.Top -> Modifier.drawBehind {
-                drawLine(border.brush, Offset(0f, 0f), Offset(size.width, 0f), border.width.value)
-            }
-            RectangleEdge.Bottom -> Modifier.drawBehind {
-                drawLine(border.brush, Offset(0f, size.height), Offset(size.width, size.height), border.width.value)
-            }
-            RectangleEdge.Left -> Modifier.drawBehind {
-                drawLine(border.brush, Offset(0f, 0f), Offset(0f, size.height), border.width.value)
-            }
-            RectangleEdge.Right -> Modifier.drawBehind {
-                drawLine(border.brush, Offset(size.width, 0f), Offset(size.width, size.height), border.width.value)
-            }
-        }
-    )
-}
 
 
