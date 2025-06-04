@@ -25,18 +25,35 @@ class KarnaughMap(
         tableFill()
     }
 
-    fun tableFill(){
-        for (i in 0 until rowCount ) {
-            rowsHeaders[i] = grayCodeGenerator.getCodeString(variables.size).substring(0, rowVariablesCount)
-            for (j in 0 until colCount ){
-                if (i == 0){
-                    colsHeaders[j] = grayCodeGenerator.getCodeString(variables.size).substring(rowVariablesCount)
+    fun tableFill() {
+        for (i in 0 until rowCount) {
+            val rowCode = grayCodeGenerator.getCodeString(variables.size).substring(0, rowVariablesCount)
+            rowsHeaders[i] = rowCode
+
+            if (i == 0) {
+                for (j in 0 until colCount) {
+                    val colCode = grayCodeGenerator.getCodeString(variables.size).substring(rowVariablesCount)
+                    colsHeaders[j] = colCode
+                    tableValues[i][j] = expression.evaluate(variables.toMap())
+                    grayCodeGenerator.getNextVars(variables)
                 }
-                tableValues[i][j] = expression.evaluate(variables.toMap())
-                grayCodeGenerator.getNextVars(variables)
+            } else {
+                if (i % 2 == 0) {
+                    for (j in 0 until colCount) {
+                        tableValues[i][j] = expression.evaluate(variables.toMap())
+                        grayCodeGenerator.getNextVars(variables)
+                    }
+                } else {
+                    for (j in (colCount - 1) downTo 0) {
+                        tableValues[i][j] = expression.evaluate(variables.toMap())
+                        grayCodeGenerator.getNextVars(variables)
+                    }
+                }
             }
         }
     }
+
+
 }
 
 class KarnaughTableFormatter(

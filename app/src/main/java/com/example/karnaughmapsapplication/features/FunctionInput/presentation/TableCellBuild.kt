@@ -24,14 +24,26 @@ fun KarnaughCell(
     groups: List<KarnaughMapMinimizer.Group>,
     cellSize: Dp
 ) {
-    val borderSides = remember(row, col, groups) {
-        calculateBorders(row, col, groups)
+    val groupColors = listOf(
+        Color.Red,
+        Color.Blue,
+        Color.Green,
+        Color.Magenta,
+        Color.Cyan,
+        Color.Yellow,
+        Color(0xFF8BC34A),  // Lime
+        Color(0xFFFF9800),  // Orange
+        Color(0xFF9C27B0)   // Purple
+    )
+
+    val borderModifier = remember(row, col, groups) {
+        calculateBorders(row, col, groups, groupColors)
     }
 
     Box(
         modifier = Modifier
             .size(cellSize)
-            .then(borderSides),
+            .then(borderModifier),
         contentAlignment = Alignment.Center
     ) {
         Text(cellText)
@@ -41,19 +53,40 @@ fun KarnaughCell(
 fun calculateBorders(
     row: Int,
     col: Int,
-    groups: List<KarnaughMapMinimizer.Group>
+    groups: List<KarnaughMapMinimizer.Group>,
+    groupColors: List<Color>
 ): Modifier {
-    val thisCellGroups = groups.filter { it.positions.contains(row to col) }
+    val groupIndex = groups.indexOfFirst { it.positions.contains(row to col) }
+    if (groupIndex == -1) return Modifier // Ячейка не принадлежит ни одной группе
+
+    val color = groupColors[groupIndex % groupColors.size]
+    val group = groups[groupIndex]
 
     fun hasSameGroupAt(r: Int, c: Int): Boolean {
-        return thisCellGroups.any { it.positions.contains(r to c) }
+        return group.positions.contains(r to c)
     }
 
-    return Modifier
-        .then(if (!hasSameGroupAt(row, col - 1)) Modifier.border(BorderStroke(5.dp, Color.Red), RectangleEdge.Left) else Modifier)
-        .then(if (!hasSameGroupAt(row, col + 1)) Modifier.border(BorderStroke(5.dp, Color.Red), RectangleEdge.Right) else Modifier)
-        .then(if (!hasSameGroupAt(row - 1, col)) Modifier.border(BorderStroke(5.dp, Color.Red), RectangleEdge.Top) else Modifier)
-        .then(if (!hasSameGroupAt(row + 1, col)) Modifier.border(BorderStroke(5.dp, Color.Red), RectangleEdge.Bottom) else Modifier)
+    val drawTop = !hasSameGroupAt(row - 1, col)
+    val drawBottom = !hasSameGroupAt(row + 1, col)
+    val drawLeft = !hasSameGroupAt(row, col - 1)
+    val drawRight = !hasSameGroupAt(row, col + 1)
+
+    return Modifier.drawBehind {
+        val strokeWidth = 4.dp.toPx()
+
+        if (drawTop) {
+            drawLine(color, Offset(0f, 0f), Offset(size.width, 0f), strokeWidth)
+        }
+        if (drawBottom) {
+            drawLine(color, Offset(0f, size.height), Offset(size.width, size.height), strokeWidth)
+        }
+        if (drawLeft) {
+            drawLine(color, Offset(0f, 0f), Offset(0f, size.height), strokeWidth)
+        }
+        if (drawRight) {
+            drawLine(color, Offset(size.width, 0f), Offset(size.width, size.height), strokeWidth)
+        }
+    }
 }
 
 enum class RectangleEdge {
@@ -78,3 +111,5 @@ fun Modifier.border(border: BorderStroke, edge: RectangleEdge): Modifier {
         }
     )
 }
+
+

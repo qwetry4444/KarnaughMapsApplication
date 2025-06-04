@@ -172,7 +172,7 @@ private fun RowHeadersAndData(
             for (i in 1 until rowCount) {
                 Row {
                     for (j in 1 until colCount) {
-                        KarnaughCell(data[i][j], i, j, groups, cellSize)
+                        KarnaughCell(data[i][j], i-1, j-1, groups, cellSize)
                     }
                 }
             }
