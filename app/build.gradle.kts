@@ -60,6 +60,11 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
 
-    implementation(libs.androidx.lifecycle.runtime.ktx.v262)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    implementation(libs.androidx.fragment.ktx)
+
+    implementation(libs.androidx.foundation)
+    implementation(libs.ui.graphics)
+
 }

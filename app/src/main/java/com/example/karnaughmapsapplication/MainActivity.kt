@@ -27,6 +27,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             KarnaughMapsApplicationTheme {
                 AppNavGraph(navController)
+
             }
         }
     }

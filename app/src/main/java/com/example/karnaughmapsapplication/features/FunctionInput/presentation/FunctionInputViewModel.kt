@@ -1,13 +1,9 @@
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.example.karnaughmapsapplication.core.domain.model.LogicalFunction
+import com.example.karnaughmapsapplication.core.domain.parsing.LogicalFunction
 import com.example.karnaughmapsapplication.core.domain.model.TableItem
-import com.example.karnaughmapsapplication.core.presentation.navigation.Screen
 import com.example.karnaughmapsapplication.features.FunctionInput.presentation.ErrorType
 import com.example.karnaughmapsapplication.features.FunctionInput.presentation.FunctionInputUiState
 import kotlinx.coroutines.flow.MutableStateFlow

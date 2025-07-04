@@ -1,18 +1,18 @@
-package com.example.karnaughmapsapplication.core.domain.model
+package com.example.karnaughmapsapplication.core.domain.parsing
+
+import com.example.karnaughmapsapplication.core.domain.KarnaughMapLogic.OrderedVariables
 
 class LogicalFunction(
     var expression: String = "",
-    var variablesCount: Int = 0
+    var variablesCount: Int = 0,
+    val variables: OrderedVariables = OrderedVariables(variablesCount)
 ) {
+
     fun isValid(): Boolean {
 
         val binaryOperators = listOf("∧", "V", "⊕", "->", "≡")
         val unaryOperators = listOf("¬")
         val constants = listOf("1", "0")
-//        val binaryOperators = TableItem.Operation.getAllOperations()
-//        val unaryOperators = listOf("¬")
-//        val constants = TableItem.Operation.getAllOperations()
-
 
         var state = States.START
         var openBrackets = 0
@@ -45,7 +45,8 @@ class LogicalFunction(
                             state = States.BINARY_OPERATOR
                         }
 
-                        expression[i].toString() in binaryOperators -> state = States.BINARY_OPERATOR
+                        expression[i].toString() in binaryOperators -> state =
+                            States.BINARY_OPERATOR
 
                         expression[i] == ')' -> {
                             if (openBrackets == 0) return false
