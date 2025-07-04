@@ -4,15 +4,15 @@ class LogicalFunction(
     var expression: String = "",
     var variablesCount: Int = 0
 ) {
-
-
-
-
     fun isValid(): Boolean {
 
         val binaryOperators = listOf("∧", "V", "⊕", "->", "≡")
         val unaryOperators = listOf("¬")
         val constants = listOf("1", "0")
+//        val binaryOperators = TableItem.Operation.getAllOperations()
+//        val unaryOperators = listOf("¬")
+//        val constants = TableItem.Operation.getAllOperations()
+
 
         var state = States.START
         var openBrackets = 0
