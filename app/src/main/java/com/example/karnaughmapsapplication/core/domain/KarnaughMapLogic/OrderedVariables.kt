@@ -1,6 +1,9 @@
 package com.example.karnaughmapsapplication.core.domain.KarnaughMapLogic
 
-class OrderedVariables(variableCount: Int, variablesNames: List<String>? = null) : Iterable<Pair<String, Boolean>> {
+class OrderedVariables(
+    variableCount: Int,
+    variablesNames: List<String>? = null
+) : Iterable<Pair<String, Boolean>> {
 
     private val names = variablesNames ?: List(variableCount) { index -> "x${index + 1}" }
     private val values = MutableList(variableCount) { false }

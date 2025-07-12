@@ -2,6 +2,7 @@ package com.example.karnaughmapsapplication.core.domain.parsing
 
 import com.example.karnaughmapsapplication.core.domain.KarnaughMapLogic.OrderedVariables
 
+
 class LogicalFunction(
     var expression: String = "",
     var variablesCount: Int = 0,

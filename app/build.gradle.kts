@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("kotlin-kapt")
 }
 
 
@@ -12,7 +13,7 @@ android {
     defaultConfig {
         applicationId = "com.example.karnaughmapsapplication"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 31
         versionCode = 1
         versionName = "1.0"
 
@@ -67,4 +68,6 @@ dependencies {
     implementation(libs.androidx.foundation)
     implementation(libs.ui.graphics)
 
+    implementation(libs.dagger)
+    kapt(libs.dagger)
 }

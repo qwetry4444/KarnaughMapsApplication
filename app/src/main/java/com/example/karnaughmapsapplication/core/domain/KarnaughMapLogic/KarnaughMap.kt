@@ -1,13 +1,15 @@
 package com.example.karnaughmapsapplication.core.domain.KarnaughMapLogic
 
 import com.example.karnaughmapsapplication.core.domain.parsing.Expression
+import javax.inject.Inject
 import kotlin.math.pow
 
-class KarnaughMap(
+class KarnaughMap @Inject constructor(
     private val expression: Expression,
-    val variables: OrderedVariables
+    val variables: OrderedVariables,
+    private val grayCodeGenerator: GrayCodeGenerator
 ) {
-    private val grayCodeGenerator: GrayCodeGenerator = GrayCodeGenerator()
+    //private val component: Dagg
 
     var rowVariablesCount = variables.size / 2
     var colVariablesCount = variables.size / 2 + variables.size % 2

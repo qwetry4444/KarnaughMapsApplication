@@ -1,5 +1,5 @@
 
-    package com.example.karnaughmapsapplication
+package com.example.karnaughmapsapplication
 
 import FunctionInputPage
 import android.content.Context
@@ -25,11 +25,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
+
             KarnaughMapsApplicationTheme {
                 AppNavGraph(navController)
-
             }
         }
     }
 }
-

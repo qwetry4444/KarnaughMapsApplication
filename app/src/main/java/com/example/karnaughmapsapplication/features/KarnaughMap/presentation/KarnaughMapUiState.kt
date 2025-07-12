@@ -1,5 +1,6 @@
 package com.example.karnaughmapsapplication.features.KarnaughMap.presentation
 
+import com.example.karnaughmapsapplication.core.domain.KarnaughMapLogic.GrayCodeGenerator
 import com.example.karnaughmapsapplication.core.domain.parsing.Parser
 import com.example.karnaughmapsapplication.core.domain.parsing.tokenize
 import com.example.karnaughmapsapplication.core.domain.KarnaughMapLogic.KarnaughMap
@@ -11,7 +12,8 @@ data class KarnaughMapUiState(
     val logicalFunction: LogicalFunction,
     val karnaughMap: KarnaughMap = KarnaughMap(
         Parser(tokenize(logicalFunction.expression)).parseExpression(),
-        logicalFunction.variables
+        logicalFunction.variables,
+        GrayCodeGenerator()
     ),
     val karnaughMapTable: KarnaughTableFormatter = KarnaughTableFormatter(karnaughMap),
     val karnaughMapMinimizer: KarnaughMapMinimizer = KarnaughMapMinimizer(karnaughMap),

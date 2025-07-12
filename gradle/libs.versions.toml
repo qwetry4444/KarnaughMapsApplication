@@ -15,6 +15,7 @@ lifecycleRuntimeKtxVersion = "2.6.2"
 lifecycleViewmodelCompose = "2.8.7"
 navigationCompose = "2.8.9"
 uiGraphics = "1.8.2"
+dagger = "2.56.2"
 
 [libraries]
 androidx-activity-compose-v160 = { module = "androidx.activity:activity-compose", version.ref = "activityComposeVersion" }
@@ -39,6 +40,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 ui-graphics = { module = "androidx.compose.ui:ui-graphics", version.ref = "uiGraphics" }
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
