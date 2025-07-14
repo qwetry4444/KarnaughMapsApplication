@@ -69,5 +69,5 @@ dependencies {
     implementation(libs.ui.graphics)
 
     implementation(libs.dagger)
-    kapt(libs.dagger)
+    kapt(libs.dagger.compiler)
 }
